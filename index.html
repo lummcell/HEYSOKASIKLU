@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --accent: #ec4899;
+    --bg: #0a0a0f;
+    --card: #15151c;
+    --text: #f1f1f5;
+    --muted: #8b8b9e;
+    --border: #26262e;
+    --success: #10b981;
+    --danger: #ef4444;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 24px;
+    backdrop-filter: blur(20px);
+    background: rgba(10,10,15,0.7);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo { font-weight: 800; font-size: 1.1rem; }
+  .logo span { color: var(--primary); }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* MAIN */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px 60px;
+    text-align: center;
+  }
+  .title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+
+  /* TOMBOL DONATE */
+  .donate-btn {
+    padding: 16px 34px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.25s;
+    box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+  }
+  .donate-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(99,102,241,0.45);
+  }
+  .donate-btn.hidden { display: none; }
+
+  /* PANEL QRIS (muncul setelah klik) */
+  .qris-panel {
+    max-width: 420px;
+    width: 100%;
+    display: none;
+    animation: fadeUp 0.5s ease;
+  }
+  .qris-panel.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .qris-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .qris-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+  .qris-card .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 22px; }
+  .qr-img {
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+  .qr-img img {
+    width: 100%;
+    max-width: 260px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 6px;
+  }
+  .qris-tags {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .qris-tags span { display: inline-flex; align-items: center; gap: 6px; }
+  .qris-tags span::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--success); border-radius: 50%;
+  }
+
+  /* FORM PESAN */
+  .send-msg {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: left;
+  }
+  .send-msg .head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .send-msg .head i {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: rgba(99,102,241,0.15);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+  .send-msg .head h3 { font-size: 0.95rem; font-weight: 700; }
+  .send-msg .head p { font-size: 0.78rem; color: var(--muted); }
+
+  .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .input-row input { flex: 1; }
+  input.field, textarea.field {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input.field:focus, textarea.field:focus { border-color: var(--primary); }
+  textarea.field {
+    resize: vertical;
+    min-height: 70px;
+    margin-bottom: 12px;
+  }
+  .send-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .send-btn:hover { background: var(--primary-dark); }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 24px 30px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .dev-credit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.3s;
+    padding: 8px 16px;
+    border-radius: 100px;
+  }
+  .dev-credit:hover { opacity: 0.8; }
+  .dev-name {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shine 3s ease-in-out infinite;
+  }
+  @keyframes shine {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* NOTIF */
+  .notif-popup {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-200%);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    z-index: 999;
+    max-width: 380px;
+    width: calc(100% - 32px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  }
+  .notif-popup.show { transform: translateX(-50%) translateY(0); }
+  .notif-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    color: white;
+  }
+  .notif-body { flex: 1; min-width: 0; text-align: left; }
+  .notif-body h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .notif-body h4 span {
+    font-size: 0.7rem;
+    color: var(--success);
+    font-weight: 600;
+  }
+  .notif-body p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal h2 {
+    font-size: 1.15rem;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+  }
+  .modal h2 button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .modal h2 button:hover { color: var(--text); }
+  .modal-input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    margin-bottom: 14px;
+  }
+  .modal-input:focus { border-color: var(--primary); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .modal-btn.ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .modal-btn.ghost:hover { color: var(--text); }
+  .modal-btn.primary { background: var(--primary); color: white; }
+  .modal-btn.primary:hover { background: var(--primary-dark); }
+  .modal-btn.danger { background: var(--danger); color: white; }
+  .modal-btn.danger:hover { background: #dc2626; }
+
+  .admin-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 0.86rem;
+  }
+  .admin-item .row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .admin-item .row strong { color: var(--primary); }
+  .admin-item .row .time { color: #555; font-size: 0.75rem; }
+  .admin-item .msg { color: var(--muted); font-style: italic; }
+  .admin-item button {
+    margin-top: 8px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .admin-item button:hover { color: var(--danger); border-color: var(--danger); }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Support<span>Ku</span></div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#" id="navDonate">Donate</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <h1 class="title">Dukung Saya<br><span class="gradient-text">Terus Berkembang</span></h1>
+  <p class="subtitle">Setiap dukungan kecilmu sangat berarti untuk terus berkarya.</p>
+
+  <!-- Tombol Donate (muncul dulu) -->
+  <button class="donate-btn" id="donateBtn">
+    <i class="fas fa-hand-holding-heart"></i> Donate Sekarang
+  </button>
+
+  <!-- Panel QRIS (muncul setelah tombol diklik) -->
+  <div class="qris-panel" id="qrisPanel">
+    <div class="qris-card">
+      <h3>QRIS</h3>
+      <p class="sub">Semua e-wallet & mobile banking</p>
+      <div class="qr-img">
+        <img src="qris.jpg" alt="QRIS">
+      </div>
+      <div class="qris-tags">
+        <span>E-Wallet</span>
+        <span>Mobile Banking</span>
+      </div>
+    </div>
+
+    <div class="send-msg">
+      <div class="head">
+        <i class="fas fa-paper-plane"></i>
+        <div>
+          <h3>Kirim Pesan</h3>
+          <p>Pesannya akan muncul sebagai notifikasi</p>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <input type="text" class="field" id="name" placeholder="Nama kamu" maxlength="30">
+        <input type="number" class="field" id="amount" placeholder="Nominal (opsional)" min="0" style="max-width:150px;">
+      </div>
+      <textarea class="field" id="message" placeholder="Tulis pesan / semangat..." maxlength="200"></textarea>
+      <button class="send-btn" id="sendBtn">
+        <i class="fas fa-paper-plane"></i> Kirim
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="dev-credit" id="devCredit">
+    DEV By <span class="dev-name">LummXD</span>
+  </div>
+</footer>
+
+<!-- NOTIFIKASI -->
+<div class="notif-popup" id="notifPopup">
+  <div class="notif-icon"><i class="fas fa-heart"></i></div>
+  <div class="notif-body">
+    <h4><span id="notifName">-</span> <span id="notifAmount"></span></h4>
+    <p id="notifMsg">-</p>
+  </div>
+</div>
+
+<!-- MODAL KEY -->
+<div class="modal-overlay" id="keyModal">
+  <div class="modal" style="max-width:380px;">
+    <h2>Panel Admin <button data-close="keyModal"><i class="fas fa-times"></i></button></h2>
+    <input type="password" class="modal-input" id="keyInput" placeholder="Masukkan key admin" autocomplete="off">
+    <div class="modal-actions">
+      <button class="modal-btn ghost" data-close="keyModal">Batal</button>
+      <button class="modal-btn primary" id="keySubmit">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADMIN -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <h2>Panel Admin <button data-close="adminModal"><i class="fas fa-times"></i></button></h2>
+    <div id="adminContent"></div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRM -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="max-width:400px;">
+    <h2 id="confirmTitle">Konfirmasi</h2>
+    <p id="confirmMsg" style="color:var(--muted);font-size:0.9rem;margin-bottom:20px;"></p>
+    <div class="modal-actions">
+      <button class="modal-btn ghost" id="confirmCancel">Batal</button>
+      <button class="modal-btn danger" id="confirmOk">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ADMIN_KEY = "admin112";
+  const STORAGE_KEY = "donations_v1";
+
+  function getDonations() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+  function saveDonations(list) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }
+  function formatRupiah(n) {
+    return "Rp " + Number(n).toLocaleString("id-ID");
+  }
+  function timeAgo(ts) {
+    const diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 60) return "baru saja";
+    if (diff < 3600) return Math.floor(diff / 60) + " menit lalu";
+    if (diff < 86400) return Math.floor(diff / 3600) + " jam lalu";
+    return Math.floor(diff / 86400) + " hari lalu";
+  }
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  /* ============================================
+     TOMBOL DONATE → MUNCULIN QRIS
+  ============================================ */
+  function showQris() {
+    document.getElementById("donateBtn").classList.add("hidden");
+    document.getElementById("qrisPanel").classList.add("show");
+    document.getElementById("qrisPanel").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  document.getElementById("donateBtn").addEventListener("click", showQris);
+  document.getElementById("navDonate").addEventListener("click", (e) => {
+    e.preventDefault();
+    showQris();
+  });
+
+  /* MODAL */
+  function openModal(id) { document.getElementById(id).classList.add("show"); }
+  function closeModal(id) { document.getElementById(id).classList.remove("show"); }
+
+  document.querySelectorAll("[data-close]").forEach(btn => {
+    btn.addEventListener("click", () => closeModal(btn.dataset.close));
+  });
+  document.querySelectorAll(".modal-overlay").forEach(ov => {
+    ov.addEventListener("click", (e) => {
+      if (e.target === ov) ov.classList.remove("show");
+    });
+  });
+
+  let confirmCallback = null;
+  function showConfirm(title, msg, cb) {
+    document.getElementById("confirmTitle").textContent = title;
+    document.getElementById("confirmMsg").textContent = msg;
+    confirmCallback = cb;
+    openModal("confirmModal");
+  }
+  document.getElementById("confirmCancel").addEventListener("click", () => {
+    closeModal("confirmModal"); confirmCallback = null;
+  });
+  document.getElementById("confirmOk").addEventListener("click", () => {
+    if (confirmCallback) confirmCallback();
+    closeModal("confirmModal"); confirmCallback = null;
+  });
+
+  /* NOTIF */
+  let notifTimer;
+  function showNotif(d) {
+    const popup = document.getElementById("notifPopup");
+    document.getElementById("notifName").textContent = d.name;
+    document.getElementById("notifAmount").textContent =
+      d.amount > 0 ? formatRupiah(d.amount) : "";
+    document.getElementById("notifMsg").textContent = d.message;
+    popup.classList.add("show");
+    clearTimeout(notifTimer);
+    notifTimer = setTimeout(() => popup.classList.remove("show"), 5000);
+  }
+
+  /* FORM PESAN */
+  document.getElementById("sendBtn").addEventListener("click", () => {
+    const name = document.getElementById("name").value.trim();
+    const amount = parseInt(document.getElementById("amount").value) || 0;
+    const message = document.getElementById("message").value.trim();
+
+    if (!name || !message) return;
+
+    const donation = { id: Date.now(), name, amount, message, time: Date.now() };
+    const list = getDonations();
+    list.push(donation);
+    saveDonations(list);
+
+    showNotif(donation);
+
+    document.getElementById("name").value = "";
+    document.getElementById("amount").value = "";
+    document.getElementById("message").value = "";
+  });
+
+  /* ============================================
+     ADMIN - KETUK 5x
+  ============================================ */
+  let tapCount = 0;
+  let tapTimer = null;
+
+  document.getElementById("devCredit").addEventListener("click", () => {
+    tapCount++;
+    clearTimeout(tapTimer);
+
+    if (tapCount >= 5) {
+      tapCount = 0;
+      openModal("keyModal");
+      document.getElementById("keyInput").value = "";
+      document.getElementById("keyInput").style.borderColor = "";
+      setTimeout(() => document.getElementById("keyInput").focus(), 100);
+      return;
+    }
+
+    tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
+  });
+
+  function submitKey() {
+    const val = document.getElementById("keyInput").value;
+    if (val === ADMIN_KEY) {
+      closeModal("keyModal");
+      renderAdmin();
+      openModal("adminModal");
+    } else {
+      document.getElementById("keyInput").style.borderColor = "var(--danger)";
+      setTimeout(() => {
+        document.getElementById("keyInput").style.borderColor = "";
+      }, 800);
+    }
+  }
+  document.getElementById("keySubmit").addEventListener("click", submitKey);
+  document.getElementById("keyInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitKey();
+  });
+
+  /* RENDER ADMIN */
+  function renderAdmin() {
+    const list = getDonations().sort((a, b) => b.time - a.time);
+    const content = document.getElementById("adminContent");
+
+    if (list.length === 0) {
+      content.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px;font-size:0.9rem;">Belum ada donasi masuk.</div>';
+      return;
+    }
+
+    const total = list.reduce((s, d) => s + (d.amount || 0), 0);
+
+    content.innerHTML = `
+      <div style="padding:14px 16px;background:rgba(99,102,241,0.1);border-radius:12px;margin-bottom:16px;text-align:left;">
+        <div style="font-size:0.8rem;color:var(--muted);">Total Donasi</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--primary);">${formatRupiah(total)}</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">${list.length} donatur</div>
+      </div>
+    ` + list.map(d => `
+      <div class="admin-item">
+        <div class="row">
+          <strong>${escapeHtml(d.name)}</strong>
+          <span class="time">${timeAgo(d.time)}</span>
+        </div>
+        ${d.amount > 0 ? `<div class="row"><span style="color:var(--success);font-weight:700;">${formatRupiah(d.amount)}</span></div>` : ''}
+        ${d.message ? `<div class="msg">"${escapeHtml(d.message)}"</div>` : ''}
+        <button onclick="deleteDonation(${d.id})">Hapus</button>
+      </div>
+    `).join("") + `
+      <button class="modal-btn danger" style="width:100%;margin-top:14px;" onclick="clearAll()">
+        Hapus Semua
+      </button>
+    `;
+  }
+
+  window.deleteDonation = function(id) {
+    showConfirm("Hapus Donasi", "Yakin mau hapus donasi ini?", () => {
+      saveDonations(getDonations().filter(d => d.id !== id));
+      renderAdmin();
+    });
+  };
+
+  window.clearAll = function() {
+    showConfirm("Hapus Semua", "Semua donasi akan dihapus permanen. Lanjutkan?", () => {
+      saveDonations([]);
+      renderAdmin();
+    });
+  };
+</script>
+
+</body>
+</html>
