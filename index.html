@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --accent: #ec4899;
+    --bg: #0a0a0f;
+    --card: #15151c;
+    --text: #f1f1f5;
+    --muted: #8b8b9e;
+    --border: #26262e;
+    --success: #10b981;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 24px;
+    backdrop-filter: blur(20px);
+    background: rgba(10,10,15,0.7);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo { font-weight: 800; font-size: 1.1rem; }
+  .logo span { color: var(--primary); }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* MAIN */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px 60px;
+    text-align: center;
+  }
+  .title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+
+  /* TOMBOL DONATE */
+  .donate-btn {
+    padding: 16px 34px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.25s;
+    box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+  }
+  .donate-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(99,102,241,0.45);
+  }
+  .donate-btn.hidden { display: none; }
+
+  /* PANEL QRIS */
+  .qris-panel {
+    max-width: 420px;
+    width: 100%;
+    display: none;
+    animation: fadeUp 0.5s ease;
+  }
+  .qris-panel.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .qris-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+  }
+  .qris-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+  .qris-card .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 22px; }
+  .qr-img {
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+  .qr-img img {
+    width: 100%;
+    max-width: 260px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 6px;
+  }
+  .qris-tags {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .qris-tags span { display: inline-flex; align-items: center; gap: 6px; }
+  .qris-tags span::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--success); border-radius: 50%;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 24px 30px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .dev-credit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    user-select: none;
+    padding: 8px 16px;
+    border-radius: 100px;
+  }
+  .dev-name {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shine 3s ease-in-out infinite;
+  }
+  @keyframes shine {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Support<span>Ku</span></div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#" id="navDonate">Donate</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <h1 class="title">Dukung Saya<br><span class="gradient-text">Terus Berkembang</span></h1>
+  <p class="subtitle">Setiap dukungan kecilmu sangat berarti untuk terus berkarya.</p>
+
+  <button class="donate-btn" id="donateBtn">
+    <i class="fas fa-hand-holding-heart"></i> Donate Sekarang
+  </button>
+
+  <div class="qris-panel" id="qrisPanel">
+    <div class="qris-card">
+      <h3>QRIS</h3>
+      <p class="sub">Semua e-wallet & mobile banking</p>
+      <div class="qr-img">
+        <img src="qris.jpg" alt="QRIS">
+      </div>
+      <div class="qris-tags">
+        <span>E-Wallet</span>
+        <span>Mobile Banking</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="dev-credit">
+    DEV By <span class="dev-name">LummXD</span>
+  </div>
+</footer>
+
+<script>
+  function showQris() {
+    document.getElementById("donateBtn").classList.add("hidden");
+    document.getElementById("qrisPanel").classList.add("show");
+    document.getElementById("qrisPanel").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  document.getElementById("donateBtn").addEventListener("click", showQris);
+  document.getElementById("navDonate").addEventListener("click", (e) => {
+    e.preventDefault();
+    showQris();
+  });
+</script>
+
+</body>
+</html>
